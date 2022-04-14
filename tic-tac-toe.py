@@ -12,42 +12,52 @@ def player_x_turn():
     show_board()
     print(f"It's {player_x}'s turn!")
     row_column = input("Write (row,column): ")
-    if row_column not in check_repeats:
-        check_repeats.append(row_column)
-        row_column = row_column.replace("(", "")
-        row_column = row_column.replace(")", "")
-        row_column = row_column.replace(",", "")
-        row = int(row_column[0])
-        column = int(row_column[1])
-        if row > 0 and row < 4 and column > 0 and column < 4:
-            board[row - 1][column - 1] = "[X]"
-        else:
-            print("The coordinates do not exist on the board. Try again!")
-            player_x_turn()
-    else:
+    if len(row_column) != 5:
+        print("Incorrect coordinates. Try again!")
+        player_x_turn()
+    elif "(" not in row_column or ")" not in row_column:
+        print("Open and close parenthesis when inputting coordinates. Try again!")
+        player_x_turn()
+    elif "," not in row_column:
+        print("Include a comma to separate row and column with a comma. Try again!")
+        player_x_turn()
+    elif int(row_column[1]) > 4 and int(row_column[3]) > 4:
+        print("Coordinates are incorrect. Remember: there are 3 rows and 3 columns. Try again!")
+        player_x_turn()
+    elif row_column in check_repeats:
         print("That space is already taken. Try again!")
         player_x_turn()
+    else:
+        check_repeats.append(row_column)
+        row = int(row_column[1])
+        column = int(row_column[3])
+        board[row - 1][column - 1] = "[X]"
 
 
 def player_o_turn():
     show_board()
     print(f"It's {player_o}'s turn!")
     row_column = input("Write (row,column): ")
-    if row_column not in check_repeats:
-        check_repeats.append(row_column)
-        row_column = row_column.replace("(", "")
-        row_column = row_column.replace(")", "")
-        row_column = row_column.replace(",", "")
-        row = int(row_column[0])
-        column = int(row_column[1])
-        if row > 0 and row < 4 and column > 0 and column < 4:
-            board[row - 1][column - 1] = "[O]"
-        else:
-            print("The coordinates do not exist on the board. Try again!")
-            player_o_turn()
-    else:
+    if len(row_column) != 5:
+        print("Incorrect coordinates. Try again!")
+        player_o_turn()
+    elif "(" not in row_column or ")" not in row_column:
+        print("Open and close parenthesis when inputting coordinates. Try again!")
+        player_o_turn()
+    elif "," not in row_column:
+        print("Include a comma to separate row and column with a comma. Try again!")
+        player_o_turn()
+    elif int(row_column[1]) > 4 and int(row_column[3]) > 4:
+        print("Coordinates are incorrect. Remember: there are 3 rows and 3 columns. Try again!")
+        player_o_turn()
+    elif row_column in check_repeats:
         print("That space is already taken. Try again!")
         player_o_turn()
+    else:
+        check_repeats.append(row_column)
+        row = int(row_column[1])
+        column = int(row_column[3])
+        board[row - 1][column - 1] = "[O]"
 
 
 def check_row_win(row_num):
@@ -113,6 +123,17 @@ def check_diagonal():
             return "win"
 
 
+def check_full_board():
+    count = 0
+    for row in range(0, 3):
+        for col in range(0, 3):
+            if " " not in board[row][col]:
+                count += 1
+    if count == 9:
+        print("It's a Draw!")
+        return "draw"
+
+
 game = True
 
 players = []
@@ -134,15 +155,16 @@ players.append(player_2)
 player_x = random.choice(players)
 players.remove(player_x)
 player_o = players[0]
-print(f"{player_x} will go first using X. {player_o} will go second using O")
+print(f"{player_x} will go first using X. {player_o} will go second using O\n")
 
 while game:
     if check_row_win(r1) == "win" or check_row_win(r2) == "win" or check_row_win(r3) == "win" or \
             check_col_win(1) == "win" or check_col_win(2) == "win" or check_col_win(3) == "win" or \
-            check_diagonal() == "win":
+            check_diagonal() == "win" or check_full_board() == "draw":
         print("Game over!")
         break
     else:
+        check_full_board()
         for each_row in board:
             check_row_win(each_row)
         for each_col in range(1, 4):
@@ -152,10 +174,11 @@ while game:
 
     if check_row_win(r1) == "win" or check_row_win(r2) == "win" or check_row_win(r3) == "win" or \
             check_col_win(1) == "win" or check_col_win(2) == "win" or check_col_win(3) == "win" or \
-            check_diagonal() == "win":
+            check_diagonal() == "win" or check_full_board() == "draw":
         print("Game over!")
         break
     else:
+        check_full_board()
         for each_row in board:
             check_row_win(each_row)
         for each_col in range(1, 4):
